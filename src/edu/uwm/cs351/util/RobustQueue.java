@@ -2,6 +2,7 @@
 package edu.uwm.cs351.util;
 import java.util.AbstractQueue;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 
 
@@ -51,7 +52,7 @@ public class RobustQueue <E> extends AbstractQueue {
 	@Override
 	public boolean offer(Object e) {
 		assert wellFormed();
-		if(e == null) throw new IllegalStateException("data can't be null");
+		if(e == null) throw new NullPointerException("data can't be null");
 		Node<E> n = new Node (e,null,null);
 		n.next = dummy;
 		dummy.prev.next = n;
@@ -115,8 +116,10 @@ public class RobustQueue <E> extends AbstractQueue {
 			// TODO Auto-generated method stub
 			assert wellFormed() : "invariant broken in hasNext()";
 
-			cursor = cursor.next;
-			cursor = cursor.prev;
+			while(cursor.next.prev != cursor) {
+				cursor = cursor.next;
+				cursor = cursor.prev;
+			}
 
 			if(cursor.next == dummy) return false;
 
@@ -127,6 +130,7 @@ public class RobustQueue <E> extends AbstractQueue {
 		@Override
 		public E next() {
 			// TODO Auto-generated method stub
+			if(!hasNext()) throw new NoSuchElementException ("no next");
 			cursor = cursor.next;
 			return (E) cursor.data;
 		}
