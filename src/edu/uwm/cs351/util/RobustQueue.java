@@ -51,6 +51,7 @@ public class RobustQueue <E> extends AbstractQueue {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean offer(Object e) {
+		
 		assert wellFormed();
 		if(e == null) throw new NullPointerException("data can't be null");
 		Node<E> n = new Node (e,null,null);
@@ -58,7 +59,7 @@ public class RobustQueue <E> extends AbstractQueue {
 		dummy.prev.next = n;
 		n.prev = dummy.prev;
 		dummy.prev = n;
-
+		if(manyNodes == 0) dummy.next = n;
 		++manyNodes;
 		assert wellFormed();
 
@@ -69,14 +70,17 @@ public class RobustQueue <E> extends AbstractQueue {
 	public Object poll() {
 		// TODO Auto-generated method stub
 		assert wellFormed();
-		Node s = dummy.next;
+		Object s = dummy.next.data;
+		dummy.next.data = null;
+		
 		dummy.next.prev = dummy;
 		dummy.next = dummy.next.next;
-
+		
+		
 		if(manyNodes != 0) --manyNodes;
 		assert wellFormed();
 
-		return s.data;
+		return s;
 	}
 
 	@Override
@@ -115,7 +119,8 @@ public class RobustQueue <E> extends AbstractQueue {
 		public boolean hasNext() {
 			// TODO Auto-generated method stub
 			assert wellFormed() : "invariant broken in hasNext()";
-
+			
+			
 			while(cursor.next.prev != cursor) {
 				cursor = cursor.next;
 				cursor = cursor.prev;
@@ -126,10 +131,11 @@ public class RobustQueue <E> extends AbstractQueue {
 			return true;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public E next() {
 			// TODO Auto-generated method stub
+			if(manyNodes == 1 && cursor.data == null) cursor = dummy;
+
 			if(!hasNext()) throw new NoSuchElementException ("no next");
 			cursor = cursor.next;
 			return (E) cursor.data;
@@ -137,13 +143,14 @@ public class RobustQueue <E> extends AbstractQueue {
 		@Override 
 		public void remove() {
 			assert wellFormed() : "invariant broken in remove()";
-			if(cursor == dummy ) throw new IllegalStateException ("cursor is not true");
-			if(cursor == dummy) return;
+			if(cursor.data == null ) throw new IllegalStateException ("cursor is not true");
+	
 			cursor.data = null;
 			cursor.next.prev = cursor.prev;
 			cursor.prev.next = cursor.next;
 			--manyNodes;
 			cursor = cursor.prev;		
 		}
+		
 	}
 }

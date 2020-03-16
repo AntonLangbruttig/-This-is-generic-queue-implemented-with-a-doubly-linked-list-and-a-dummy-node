@@ -1,3 +1,4 @@
+import java.util.Iterator;
 import java.util.Queue;
 
 import edu.uwm.cs351.util.RobustQueue;
@@ -299,4 +300,46 @@ public class TestRobustQueue extends TestCollection<String> {
 		assertTrue(it.hasNext());
 		assertEquals("9",it.next());
 	}
+	/********************************************************************************************
+	 * 
+	 */
+//	
+//
+//	  public void test100() {
+//	    RobustQueue<String> s0;
+//	    Iterator<String> i0;
+//
+//	    s0 = new RobustQueue<>();
+//	    s0.peek();
+//	    i0 = s0.iterator();
+//	    s0.offer("two");
+//	    i0.next();
+//	    try {
+//	       i0.next();
+//	      assertFalse("should have thrown exception",true);
+//	    } catch (RuntimeException ex) { }
+//	    s0.clear();
+//	    s0.add("nine");
+//	    s0.remove("zero");
+//	    i0.next(); // throws an exception unexpectedly
+//	  }
+//	  
+//
+//	  public void test101() {
+//	    RobustQueue<String> s0;
+//	    Iterator<String> i0;
+//
+//	    s0 = new RobustQueue<>();
+//	    i0 = s0.iterator();
+//	    s0.add("eight");
+//	    i0.next();
+//	    s0.add("ten");
+//	    i0.next();
+//	    i0.hasNext();
+//	    i0.remove();
+//	    try {
+//	      i0.remove();
+//	      assertFalse("should have thrown exception",true);
+//	    } catch (RuntimeException ex) { }
+//	  }
 }
