@@ -27,9 +27,28 @@ public class RobustQueue <E> extends AbstractQueue {
 		}
 	}
 
+	private static boolean doReport = true;
+
+	private boolean report(String error) {
+		if (doReport) System.out.println("Invariant error: " + error);
+		else System.out.println("Caught problem: " + error);
+		return false;
+	}
+
 	private boolean wellFormed () {
-		if(manyNodes < 0 )return false;
-		if(dummy == null) return false;
+		int count = 0;
+		if (dummy.next != dummy) {
+			Node<E> n = dummy.next;
+			do {
+				++count;
+				Node<E> p = n;
+				n = n.next;
+				if (n == null) return report("found null after " + count + " nodes.");
+				if (n.prev != p) return report("found bad link after " + count + " nodes.");
+			} while (n != dummy);
+		}
+		if (manyNodes != count ) return report("manyNodes is " + manyNodes + ", not matching actual count=" + count);
+		if(dummy == null) return report ("dummy can't be null");
 		return true;
 
 	}
@@ -51,16 +70,17 @@ public class RobustQueue <E> extends AbstractQueue {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean offer(Object e) {
-
 		assert wellFormed();
+		
 		if(e == null) throw new NullPointerException("data can't be null");
-		Node<E> n = new Node (e,null,null);
+		Node<E> n = new Node  (e,null,null);
 		n.next = dummy;
 		dummy.prev.next = n;
 		n.prev = dummy.prev;
 		dummy.prev = n;
 		if(manyNodes == 0) dummy.next = n;
 		++manyNodes;
+		
 		assert wellFormed();
 
 		return true;
@@ -68,13 +88,14 @@ public class RobustQueue <E> extends AbstractQueue {
 
 	@Override
 	public Object poll() {
-		// TODO Auto-generated method stub
 		assert wellFormed();
+		
 		Object s = dummy.next.data;
 		dummy.next.data = null;
 		dummy.next.prev = dummy;
 		dummy.next = dummy.next.next;
 		if(manyNodes != 0) --manyNodes;
+		
 		assert wellFormed();
 
 		return s;
@@ -82,22 +103,19 @@ public class RobustQueue <E> extends AbstractQueue {
 
 	@Override
 	public Object peek() {
-		// TODO Auto-generated method stub
-
+		assert wellFormed();
 		return dummy.next.data;
 	}
 
 	@Override
 	public Iterator iterator() {
-		// TODO Auto-generated method stub
 		assert wellFormed();
 		return new MyIterator();
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-
+		assert wellFormed();
 		return manyNodes;
 	}
 
@@ -114,26 +132,27 @@ public class RobustQueue <E> extends AbstractQueue {
 
 		@Override
 		public boolean hasNext() {
-			// TODO Auto-generated method stub
 			assert wellFormed() : "invariant broken in hasNext()";
+			
 			Node n = cursor;
 			while(n != dummy && n.data == null) {
 				n = n.prev;
 			}
 
-			if(n.next == dummy || manyNodes ==0) return false;
+			if(n.next == dummy || manyNodes == 0) return false;
 
 			return true;
 		}
 
 		@Override
 		public E next() {
-			// TODO Auto-generated method stub
 			if(!hasNext()) throw new NoSuchElementException ("no next");
+			
 			while(cursor != dummy && cursor.data == null) {
 				cursor = cursor.prev;
 			}
 			cursor = cursor.next;
+			
 			return (E) cursor.data;
 		}
 		@Override 
