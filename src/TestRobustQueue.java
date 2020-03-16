@@ -403,5 +403,39 @@ public class TestRobustQueue extends TestCollection<String> {
 		    Object test = i0.next(); // during testing, was null
 		    assertEquals("eight",test);
 		  }
+	  public void test106() {
+		    RobustQueue<String> s0;
+		    Iterator<String> i0, i1, i2;
+
+		    s0 = new RobustQueue<>();
+		    s0.offer("seven");
+		    i0 = s0.iterator();
+		    i1 = s0.iterator();
+		    s0.element();
+		    i0.next();
+		    s0.offer("three");
+		    i0.next();
+		    try {
+		       i0.next();
+		      assertFalse("should have thrown exception",true);
+		    } catch (RuntimeException ex) { }
+		    s0.remove();
+		    try {
+		       i0.next();
+		      assertFalse("should have thrown exception",true);
+		    } catch (RuntimeException ex) { }
+		    try {
+		       i0.next();
+		      assertFalse("should have thrown exception",true);
+		    } catch (RuntimeException ex) { }
+		    s0.add("eight");
+		    i1.next();
+		    i0.next();
+		    s0.add("four");
+		    i2 = s0.iterator();
+		    i1.remove();
+		    Object test = i1.next(); // during testing, was null
+		    assertEquals("eight",test);
+		  }
 	  
 }

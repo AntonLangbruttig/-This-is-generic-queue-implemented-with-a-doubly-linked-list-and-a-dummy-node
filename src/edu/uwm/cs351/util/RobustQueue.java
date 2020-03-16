@@ -145,7 +145,7 @@ public class RobustQueue <E> extends AbstractQueue {
 			cursor.next.prev = cursor.prev;
 			cursor.prev.next = cursor.next;
 			--manyNodes;
-			if(manyNodes == 1 && dummy.next == cursor) dummy.next = cursor.next;
+			if( dummy.next == cursor) dummy.next = cursor.next;
 		}
 
 	}
