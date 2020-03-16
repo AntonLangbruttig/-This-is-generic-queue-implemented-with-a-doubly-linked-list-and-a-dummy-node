@@ -303,43 +303,105 @@ public class TestRobustQueue extends TestCollection<String> {
 	/********************************************************************************************
 	 * 
 	 */
-//	
-//
-//	  public void test100() {
-//	    RobustQueue<String> s0;
-//	    Iterator<String> i0;
-//
-//	    s0 = new RobustQueue<>();
-//	    s0.peek();
-//	    i0 = s0.iterator();
-//	    s0.offer("two");
-//	    i0.next();
-//	    try {
-//	       i0.next();
-//	      assertFalse("should have thrown exception",true);
-//	    } catch (RuntimeException ex) { }
-//	    s0.clear();
-//	    s0.add("nine");
-//	    s0.remove("zero");
-//	    i0.next(); // throws an exception unexpectedly
-//	  }
-//	  
-//
-//	  public void test101() {
-//	    RobustQueue<String> s0;
-//	    Iterator<String> i0;
-//
-//	    s0 = new RobustQueue<>();
-//	    i0 = s0.iterator();
-//	    s0.add("eight");
-//	    i0.next();
-//	    s0.add("ten");
-//	    i0.next();
-//	    i0.hasNext();
-//	    i0.remove();
-//	    try {
-//	      i0.remove();
-//	      assertFalse("should have thrown exception",true);
-//	    } catch (RuntimeException ex) { }
-//	  }
+	
+
+	  public void test100() {
+	    RobustQueue<String> s0;
+	    Iterator<String> i0;
+
+	    s0 = new RobustQueue<>();
+	    s0.peek();
+	    i0 = s0.iterator();
+	    s0.offer("two");
+	    i0.next();
+	    try {
+	       i0.next();
+	      assertFalse("should have thrown exception",true);
+	    } catch (RuntimeException ex) { }
+	    s0.clear();
+	    s0.add("nine");
+	    s0.remove("zero");
+	    i0.next(); // throws an exception unexpectedly
+	  }
+	  
+
+	  public void test101() {
+	    RobustQueue<String> s0;
+	    Iterator<String> i0;
+
+	    s0 = new RobustQueue<>();
+	    i0 = s0.iterator();
+	    s0.add("eight");
+	    i0.next();
+	    s0.add("ten");
+	    i0.next();
+	    i0.hasNext();
+	    i0.remove();
+	    try {
+	      i0.remove();
+	      assertFalse("should have thrown exception",true);
+	    } catch (RuntimeException ex) { }
+	  }
+	  public void test103() {
+		    RobustQueue<String> s0;
+		    Iterator<String> i0;
+
+		    s0 = new RobustQueue<>();
+		    i0 = s0.iterator();
+		    s0.offer("zero");
+		    i0.next();
+		    i0 = s0.iterator();
+		    s0.add("eight");
+		    i0.next();
+		    i0.next();
+		    i0.remove();
+		    try {
+		      i0.next();
+		      assertFalse("should have thrown exception",true);
+		    } catch (RuntimeException ex) { }
+		  }
+
+	  public void test104() {
+	    RobustQueue<String> s0, s1;
+	    Iterator<String> i0;
+
+	    s0 = new RobustQueue<>();
+	    s0.add("one");
+	    i0 = s0.iterator();
+	    i0.next();
+	    try {
+	       i0.next();
+	      assertFalse("should have thrown exception",true);
+	    } catch (RuntimeException ex) { }
+	    s0.add("zero");
+	    i0.next();
+	    i0.remove();
+	    try {
+	       i0.next();
+	      assertFalse("should have thrown exception",true);
+	    } catch (RuntimeException ex) { }
+	    s1 = new RobustQueue<>();
+	    try {
+	      i0.remove();
+	      assertFalse("should have thrown exception",true);
+	    } catch (RuntimeException ex) { }
+	  }
+	  public void test105() {
+		    RobustQueue<String> s0;
+		    Iterator<String> i0;
+
+		    s0 = new RobustQueue<>();
+		    s0.peek();
+		    s0.offer("nine");
+		    i0 = s0.iterator();
+		    s0.offer("one");
+		    i0.next();
+		    s0.offer("eight");
+		    s0.remove();
+		    i0.next();
+		    i0.remove();
+		    Object test = i0.next(); // during testing, was null
+		    assertEquals("eight",test);
+		  }
+	  
 }

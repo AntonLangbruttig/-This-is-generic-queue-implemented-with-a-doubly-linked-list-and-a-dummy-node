@@ -51,7 +51,7 @@ public class RobustQueue <E> extends AbstractQueue {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean offer(Object e) {
-		
+
 		assert wellFormed();
 		if(e == null) throw new NullPointerException("data can't be null");
 		Node<E> n = new Node (e,null,null);
@@ -72,11 +72,8 @@ public class RobustQueue <E> extends AbstractQueue {
 		assert wellFormed();
 		Object s = dummy.next.data;
 		dummy.next.data = null;
-		
 		dummy.next.prev = dummy;
 		dummy.next = dummy.next.next;
-		
-		
 		if(manyNodes != 0) --manyNodes;
 		assert wellFormed();
 
@@ -119,14 +116,12 @@ public class RobustQueue <E> extends AbstractQueue {
 		public boolean hasNext() {
 			// TODO Auto-generated method stub
 			assert wellFormed() : "invariant broken in hasNext()";
-			
-			
-			while(cursor.next.prev != cursor) {
-				cursor = cursor.next;
-				cursor = cursor.prev;
+			Node n = cursor;
+			while(n != dummy && n.data == null) {
+				n = n.prev;
 			}
 
-			if(cursor.next == dummy) return false;
+			if(n.next == dummy || manyNodes ==0) return false;
 
 			return true;
 		}
@@ -134,23 +129,24 @@ public class RobustQueue <E> extends AbstractQueue {
 		@Override
 		public E next() {
 			// TODO Auto-generated method stub
-			if(manyNodes == 1 && cursor.data == null) cursor = dummy;
-
 			if(!hasNext()) throw new NoSuchElementException ("no next");
+			while(cursor != dummy && cursor.data == null) {
+				cursor = cursor.prev;
+			}
 			cursor = cursor.next;
 			return (E) cursor.data;
 		}
 		@Override 
 		public void remove() {
 			assert wellFormed() : "invariant broken in remove()";
-			if(cursor.data == null ) throw new IllegalStateException ("cursor is not true");
-	
+			if(cursor.data == null || manyNodes == 0 ) throw new IllegalStateException ("cursor is not true");
+
 			cursor.data = null;
 			cursor.next.prev = cursor.prev;
 			cursor.prev.next = cursor.next;
 			--manyNodes;
-			cursor = cursor.prev;		
+			if(manyNodes == 1 && dummy.next == cursor) dummy.next = cursor.next;
 		}
-		
+
 	}
 }
