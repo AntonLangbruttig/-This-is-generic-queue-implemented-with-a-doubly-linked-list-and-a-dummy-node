@@ -6,7 +6,6 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 
 
-
 /******************************************************************************
  * This is generic queue implemented with a doubly-linked list and a dummy node
  ******************************************************************************/
