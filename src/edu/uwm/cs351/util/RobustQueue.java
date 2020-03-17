@@ -64,14 +64,14 @@ public class RobustQueue <E> extends AbstractQueue {
 		dummy.next = dummy;
 		dummy.prev = dummy;
 
-		assert wellFormed();
+		assert wellFormed(): "invariant broken at beginning";;
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+	@Override  // required
 	public boolean offer(Object e) {
-		assert wellFormed();
-		
+		assert wellFormed(): "invariant broken at start of offer()";;
+
 		if(e == null) throw new NullPointerException("data can't be null");
 		Node<E> n = new Node  (e,null,null);
 		n.next = dummy;
@@ -80,42 +80,42 @@ public class RobustQueue <E> extends AbstractQueue {
 		dummy.prev = n;
 		if(manyNodes == 0) dummy.next = n;
 		++manyNodes;
-		
-		assert wellFormed();
+
+		assert wellFormed(): "invariant broken at end of offer()";;
 
 		return true;
 	}
 
-	@Override
+	@Override  // required
 	public Object poll() {
-		assert wellFormed();
-		
+		assert wellFormed(): "invariant broken at start of poll()";;
+
 		Object s = dummy.next.data;
 		dummy.next.data = null;
 		dummy.next.prev = dummy;
 		dummy.next = dummy.next.next;
 		if(manyNodes != 0) --manyNodes;
-		
-		assert wellFormed();
+
+		assert wellFormed(): "invariant broken at end of poll()";;
 
 		return s;
 	}
 
-	@Override
+	@Override  // required
 	public Object peek() {
-		assert wellFormed();
+		assert wellFormed(): "invariant broken at start of peek()";;
 		return dummy.next.data;
 	}
 
-	@Override
+	@Override  // required
 	public Iterator iterator() {
-		assert wellFormed();
+		assert wellFormed(): "invariant broken at start of iterator()";;
 		return new MyIterator();
 	}
 
-	@Override
+	@Override  // required
 	public int size() {
-		assert wellFormed();
+		assert wellFormed(): "invariant broken at start of size()";;
 		return manyNodes;
 	}
 
@@ -123,17 +123,16 @@ public class RobustQueue <E> extends AbstractQueue {
 
 		Node <E> cursor = dummy;
 
-
 		private boolean wellFormed() {
 			if(!RobustQueue.this.wellFormed()) return false;
 
 			return true;
 		}
 
-		@Override
+		@Override  // required
 		public boolean hasNext() {
 			assert wellFormed() : "invariant broken in hasNext()";
-			
+
 			Node n = cursor;
 			while(n != dummy && n.data == null) {
 				n = n.prev;
@@ -144,18 +143,18 @@ public class RobustQueue <E> extends AbstractQueue {
 			return true;
 		}
 
-		@Override
+		@Override  // required
 		public E next() {
 			if(!hasNext()) throw new NoSuchElementException ("no next");
-			
+
 			while(cursor != dummy && cursor.data == null) {
 				cursor = cursor.prev;
 			}
 			cursor = cursor.next;
-			
+
 			return (E) cursor.data;
 		}
-		@Override 
+		@Override  // required
 		public void remove() {
 			assert wellFormed() : "invariant broken in remove()";
 			if(cursor.data == null || manyNodes == 0 ) throw new IllegalStateException ("cursor is not true");
