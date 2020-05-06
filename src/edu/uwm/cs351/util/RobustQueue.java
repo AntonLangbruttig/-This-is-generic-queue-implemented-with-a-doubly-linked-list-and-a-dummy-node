@@ -10,20 +10,19 @@ import java.util.Queue;
  * This is generic queue implemented with a doubly-linked list and a dummy node
  ******************************************************************************/
 
-@SuppressWarnings("rawtypes")
-public class RobustQueue <E> extends AbstractQueue {
+
+public class RobustQueue <E> extends AbstractQueue<E> {
 
 	private Node <E> dummy;
 	private int manyNodes = 0;
 
-	static class Node <T> {
+	private static class Node <T> {
 		T data;
 		Node<T> next, prev;
-		Node(T t, Node<T> n, Node <T> p){
-			data = t;
-			next = n;
-			prev = p;
+		Node(T d){
+			data = d;
 		}
+
 	}
 
 	private static boolean doReport = true;
@@ -51,6 +50,9 @@ public class RobustQueue <E> extends AbstractQueue {
 		return true;
 
 	}
+	private Node<E> node(E d){
+		return new Node<E>(d);
+	}
 
 	/**
 	 * Instantiates a new RobustQueue.
@@ -59,20 +61,19 @@ public class RobustQueue <E> extends AbstractQueue {
 	 * 	This RobustQueue is empty except for the dummy node
 	 */
 	public RobustQueue() {
-		dummy = new Node <E>(null,null,null);
+		dummy = node(null);
 		dummy.next = dummy;
 		dummy.prev = dummy;
 
 		assert wellFormed(): "invariant broken at beginning";;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override  // required
-	public boolean offer(Object e) {
+	@Override
+	public boolean offer(E e) {
 		assert wellFormed(): "invariant broken at start of offer()";;
 
 		if(e == null) throw new NullPointerException("data can't be null");
-		Node<E> n = new Node  (e,null,null);
+		Node<E> n = node(e);
 		n.next = dummy;
 		dummy.prev.next = n;
 		n.prev = dummy.prev;
@@ -85,11 +86,11 @@ public class RobustQueue <E> extends AbstractQueue {
 		return true;
 	}
 
-	@Override  // required
-	public Object poll() {
+	@Override 
+	public E poll() {
 		assert wellFormed(): "invariant broken at start of poll()";;
 
-		Object s = dummy.next.data;
+		E s = dummy.next.data;
 		dummy.next.data = null;
 		dummy.next.prev = dummy;
 		dummy.next = dummy.next.next;
@@ -100,19 +101,19 @@ public class RobustQueue <E> extends AbstractQueue {
 		return s;
 	}
 
-	@Override  // required
-	public Object peek() {
+	@Override  
+	public E peek() {
 		assert wellFormed(): "invariant broken at start of peek()";;
 		return dummy.next.data;
 	}
 
-	@Override  // required
-	public Iterator iterator() {
+	@Override  
+	public Iterator<E> iterator() {
 		assert wellFormed(): "invariant broken at start of iterator()";;
 		return new MyIterator();
 	}
 
-	@Override  // required
+	@Override  
 	public int size() {
 		assert wellFormed(): "invariant broken at start of size()";;
 		return manyNodes;
@@ -128,11 +129,11 @@ public class RobustQueue <E> extends AbstractQueue {
 			return true;
 		}
 
-		@Override  // required
+		@Override  
 		public boolean hasNext() {
 			assert wellFormed() : "invariant broken in hasNext()";
 
-			Node n = cursor;
+			Node <E> n = cursor;
 			while(n != dummy && n.data == null) {
 				n = n.prev;
 			}
@@ -142,7 +143,7 @@ public class RobustQueue <E> extends AbstractQueue {
 			return true;
 		}
 
-		@Override  // required
+		@Override 
 		public E next() {
 			if(!hasNext()) throw new NoSuchElementException ("no next");
 
@@ -153,7 +154,7 @@ public class RobustQueue <E> extends AbstractQueue {
 
 			return (E) cursor.data;
 		}
-		@Override  // required
+		@Override 
 		public void remove() {
 			assert wellFormed() : "invariant broken in remove()";
 			if(cursor.data == null || manyNodes == 0 ) throw new IllegalStateException ("cursor is not true");
